@@ -1,23 +1,72 @@
---Q1
+--1. Write a query that retrieves the columns ProductID, Name, Color and ListPrice from the Production.Product table, with no filter.
+SELECT ProductID, Name, Color, ListPrice
+FROM Production.Product
 
---Q2
+--2. Write a query that retrieves the columns
+--ProductID, Name, Color and ListPrice from the Production.Product table,
+--excluding the rows that ListPrice is 0.
+SELECT ProductID, Name, Color, ListPrice 
+FROM Production.Product
+WHERE ListPrice != 0
 
---Q3
+--3. Write a query that retrieves the columns 
+--ProductID, Name, Color, ListPrice 
+--from the Production.Product table, the rows that are not NULL for the Color column.
+SELECT ProductID, Name, Color, ListPrice 
+FROM Production.Product
+WHERE Color IS NOT NULL
 
---Q4
+--4. Write a query that retrieves the columns 
+--ProductID, Name, Color, ListPrice from the Production.Product table, the rows that are not NULL for the column Color, and the column ListPrice has a value greater than zero.
+SELECT ProductID, Name, Color, ListPrice
+FROM Production.Product
+WHERE Color IS NOT NULL AND ListPrice > 0
 
---Q5
+--5.Write a query that concatenates the columns Name and Color
+--from the Production.Product table by excluding the rows that are null for color.
+SELECT Name + ' ' + Color AS NameAndColor
+FROM Production.Product
+WHERE Color IS NOT NULL
 
---Q6
+--6. Write a query that generates the following result set from Production.Product:
+SELECT 'NAME: ' + Name + ' -- COLOR: ' + Color AS NameAndColor
+FROM Production.Product
+WHERE Name IS NOT NULL AND Color IS NOT NULL
 
---Q7
+--7. Write a query to retrieve the columns ProductID and Name from the Production.Product table filtered by ProductID from 400 to 500 using between
+SELECT ProductID, Name
+FROM Production.Product
+WHERE ProductID BETWEEN 400 AND 500
 
---Q8
+--8. Write a query to retrieve the columns  ProductID,Name and color 
+--from the Production.Product table restricted to the colors black and blue
+SELECT ProductID,Name,Color
+FROM Production.Product
+WHERE Color IN ('Black','Blue')
 
---Q9
+--9. Write a query to get a result set on products that begins with the letter S. 
+SELECT ProductID, Name
+FROM Production.Product
+WHERE Name LIKE 'S%'
 
---Q10
+--10. Write a query that retrieves the columns Name and ListPrice
+--from the Production.Product table. Your result set should look something like the following. 
+--Order the result set by the Name column. The products name should start with either 'A' or 'S'
+SELECT Name, ListPrice
+FROM Production.Product
+WHERE Name LIKE 'A%' OR Name LIKE 'S%'
+ORDER BY Name
 
---Q11
+--11. Write a query so you retrieve rows that have a Name that begins with the letters SPO, but is then not followed by the letter K. After this zero or more letters can exists. 
+--Order the result set by the Name column.
+SELECT * 
+FROM Production.Product
+WHERE Name LIKE 'SPO%' AND NOT Name LIKE 'SPOK%'
+ORDER BY Name
 
---Q12
+--12. Write a query that retrieves the unique combination of columns ProductSubcategoryID and Color 
+--from the Production.Product table. 
+--We do not want any rows that are NULL in any of the two columns in the result. (Hint: Use IsNull)
+SELECT DISTINCT ProductSubcategoryID, Color
+FROM Production.Product
+WHERE ProductSubcategoryID IS NOT NULL AND Color IS NOT NULL
