@@ -110,10 +110,10 @@ HAVING COUNT(Title) > 1)
 --12. Display all the Managers who have more than 2 employees reporting to them.
 SELECT e.FirstName, e.LastName, rp.ReportsTo
 FROM 
-(SELECT ReportsTo, COUNT(ReportsTo)
+(SELECT ReportsTo, COUNT(ReportsTo) r
 FROM Employees
 GROUP BY ReportsTo
-HAVING COUNT(ReportsTo) > 2) AS rp JOIN Employees e ON rp.ReportsTo  = e.EmployeeID
+HAVING COUNT(ReportsTo) > 2) rp JOIN Employees e ON rp.ReportsTo  = e.EmployeeID
 
 
 
@@ -207,15 +207,34 @@ HAVING COUNT(od.ProductID) >=2
 
 --19. List 5 most popular products, their average price, and the customer city that ordered most quantity of it.
 --Popular = Sum(ProductID), average price = AVE(UnitPrice) of all orders, city ordered most quantity = max(quantity) by city
+SELECT inf1.*,inf2.ShipCity BestSellingCity
+FROM(
+    SELECT TOP 5 od.ProductID, SUM(Quantity) Quantity, AVG(UnitPrice) AvgPrice
+    FROM [Order Details] od
+    GROUP BY od.ProductID
+    ORDER BY  SUM(Quantity) DESC
+    
+) inf1
+LEFT JOIN
+(
 
- 
+SELECT *
+FROM(SELECT odd.ProductID,o.ShipCity,SUM(odd.Quantity) Quantity, ROW_NUMBER() OVER(PARTITION BY odd.ProductID ORDER BY SUM(odd.Quantity)DESC) RNK
+FROM Orders o JOIN [Order Details] odd ON o.OrderID = odd.OrderID
+GROUP BY odd.ProductID,o.ShipCity) dt
+WHERE RNK = 1
 
+)inf2
+ON inf1.ProductID = inf2.ProductID
+ORDER BY  inf1.Quantity DESC
 
 --20. List one city, if exists, that is the city from where the employee sold most orders (not the product quantity) is, and also the city of most total quantity of products ordered
 --from. (tip: join  sub-query)
 --Order JOIN Employees by EmployeeID 
 --Subquery rank order quantity sold, and rank product quantity sold
 --Main query filter WHERE rank =1 and rank = 1
+
+
 
 
 
