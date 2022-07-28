@@ -234,9 +234,62 @@ ORDER BY  inf1.Quantity DESC
 --Subquery rank order quantity sold, and rank product quantity sold
 --Main query filter WHERE rank =1 and rank = 1
 
+Go
+CREATE VIEW MostOrderCity
+AS
+SELECT EmployeeID, ShipCity
+FROM (
+    SELECT EmployeeID,ShipCity, RANK() OVER(PARTITION BY EmployeeID ORDER BY COUNT(OrderID)DESC) RNKNumOfOrder
+    FROM Orders
+    GROUP BY EmployeeID,ShipCity
+) dt
+WHERE RNKNumOfOrder = 1
 
+GO
+
+CREATE VIEW MostQuantityCity
+AS
+SELECT EmployeeID, ShipCity
+FROM (
+    SELECT o.EmployeeID,o.ShipCity,  RANK() OVER(PARTITION BY EmployeeID ORDER BY SUM(od.Quantity)DESC)RNKTotalQuantity
+    FROM Orders o JOIN [Order Details] od ON o.OrderID = od.OrderID
+    GROUP BY o.EmployeeID,o.ShipCity
+) dt1
+WHERE RNKTotalQuantity = 1
+
+GO
+SELECT TOP 1 moc.EmployeeID, moc.ShipCity, mqc.ShipCity
+FROM MostOrderCity moc JOIN MostQuantityCity mqc
+ON moc.EmployeeID = mqc.EmployeeID
+WHERE moc.ShipCity = mqc.ShipCity
 
 
 
 --21. How do you remove the duplicates record of a table?
---Use DISTINCT clause
+--create table
+CREATE TABLE customerDEMO (
+    name VARCHAR(20),
+    gender VARCHAR(20),
+    city VARCHAR(20)
+)
+GO
+--populate table
+INSERT INTO customerDEMO VALUES('Steve','Male','Albany')
+INSERT INTO customerDEMO VALUES('Steve','Male','Albany')
+GO
+--Check duplicates
+SELECT *
+FROM customerDEMO
+GO
+--Remove duplicates
+WITH cte 
+AS (
+    SELECT name, gender, city,ROW_NUMBER()OVER (PARTITION BY name, gender, city ORDER BY name, gender, city) NumOfRows
+    FROM customerDEMO
+)
+DELETE FROM cte
+WHERE NumOfRows > 1
+GO
+--Check again
+SELECT *
+FROM customerDEMO
