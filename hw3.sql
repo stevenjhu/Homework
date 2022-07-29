@@ -65,6 +65,45 @@ GO
 DROP TABLE people_hu
 DROP TABLE city_hu
 DROP VIEW packers_hu
---5.       Create a stored procedure “sp_birthday_employees_[you_last_name]” that creates a new table “birthday_employees_your_last_name” and fill it with all employees that have a birthday on Feb. (Make a screen shot) drop the table. Employee table should not be affected.
+GO
+--5.       Create a stored procedure “sp_birthday_employees_[you_last_name]” that creates a new table “birthday_employees_your_last_name” and fill it with all employees that have a birthday on Feb. 
+--(Make a screen shot) drop the table. Employee table should not be affected.
 CREATE PROC sp_birthday_employees_hu
---6.      How do you make sure two tables have the same data?
+AS
+BEGIN
+
+    SELECT *
+    INTO birthday_employees_hu
+    FROM Employees
+    WHERE MONTH(BirthDate) = 2
+        
+END
+EXEC sp_birthday_employees_hu
+GO
+SELECT * FROM birthday_employees_hu
+GO
+DROP TABLE birthday_employees_hu
+--6.How do you make sure two tables have the same data?
+--First of all, check if the two tables have the same schema
+--Then
+--CREATE two identical tables
+CREATE TABLE demo1(
+    Id INT PRIMARY KEY
+)
+CREATE TABLE demo2(
+    Id INT PRIMARY KEY
+)
+INSERT INTO demo1 VALUES(1)
+INSERT INTO demo2 VALUES(1)
+GO
+--if the result set is empty, the two tables contain identical content
+SELECT * FROM demo1
+EXCEPT
+SELECT * FROM demo2
+GO
+--if the result set is not empty, the difference in the two tables will show up in the result set
+INSERT INTO demo1 VALUES(2)
+GO
+SELECT * FROM demo1
+EXCEPT
+SELECT * FROM demo2
